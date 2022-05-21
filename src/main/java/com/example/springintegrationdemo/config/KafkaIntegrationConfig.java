@@ -66,6 +66,11 @@ public class KafkaIntegrationConfig {
 	}
 
 	@Bean
+	public PollableChannel toKafka() {
+		return new QueueChannel();
+	}
+
+	@Bean
 	public NewTopic topic(KafkaAppProperties properties) {
 		return new NewTopic(properties.getTopic(), 1, (short)1);
 	}
@@ -78,10 +83,8 @@ public class KafkaIntegrationConfig {
 	public void addAnotherListenerForTopics(String... topics) {
 		Map<String, Object> consumerProperties = kafkaProperties.buildConsumerProperties();
 		// change the group id so we don't revoke the other partitions.
-		consumerProperties.put(ConsumerConfig.GROUP_ID_CONFIG,
-			consumerProperties.get(ConsumerConfig.GROUP_ID_CONFIG) + "x");
-		IntegrationFlow flow = IntegrationFlows.from(Kafka.messageDrivenChannelAdapter(
-				new DefaultKafkaConsumerFactory<String, String>(consumerProperties), topics))
+		consumerProperties.put(ConsumerConfig.GROUP_ID_CONFIG, consumerProperties.get(ConsumerConfig.GROUP_ID_CONFIG) + "x");
+		IntegrationFlow flow = IntegrationFlows.from(Kafka.messageDrivenChannelAdapter(new DefaultKafkaConsumerFactory<String, String>(consumerProperties), topics))
 			.channel("fromKafka")
 			.get();
 		this.flowContext.registration(flow).register();

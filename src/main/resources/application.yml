@@ -5,12 +5,16 @@ kafka:
 spring:
   kafka:
     consumer:
+      bootstrap-servers:
+        - localhost:9092
       group-id: springIntegrationTestGroup
       auto-offset-reset: earliest
       enable-auto-commit: false
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
     producer:
+      bootstrap-servers:
+        - localhost:9092
       batch-size: 16384
       buffer-memory: 33554432
       retries: 0
